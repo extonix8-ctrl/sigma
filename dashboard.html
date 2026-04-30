@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>BOTNET DASHBOARD</title>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+  <style>
+    body { font-family: monospace; background: #000; color: #0f0; padding: 20px; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { border: 1px solid #0f0; padding: 8px; text-align: left; }
+    .live { color: lime; }
+  </style>
+</head>
+<body>
+  <h1>BOTNET DASHBOARD <span id="count">0</span> LIVE</h1>
+  <table id="table"><tr><th>HWID</th><th>User</th><th>IP</th><th>OS</th><th>Last Seen</th><th>Status</th></tr></table>
+
+  <script>
+    const firebaseConfig = {
+      databaseURL: "https://mynet-b06ed-default-rtdb.firebaseio.com"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database().ref('bots');
+
+    db.on('value', (snapshot) => {
+      const data = snapshot.val();
+      const tbody = document.getElementById('table');
+      tbody.innerHTML = `<tr><th>HWID</th><th>User</th><th>IP</th><th>OS</th><th>Last Seen</th><th>Status</th></tr>`;
+      let count = 0;
+      for (let key in data) {
+        const bot = data[key];
+        const row = `<tr><td>${key}</td><td>${bot.username}</td><td>${bot.ip}</td><td>${bot.os}</td><td>${new Date(bot.timestamp).toLocaleString()}</td><td class="live">${bot.status}</td></tr>`;
+        tbody.innerHTML += row;
+        count++;
+      }
+      document.getElementById('count').textContent = count;
+    });
+  </script>
+</body>
+</html>
