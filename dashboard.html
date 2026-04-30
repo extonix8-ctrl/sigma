@@ -15,19 +15,13 @@
   <h1>BOTNET DASHBOARD</h1>
 
   <script>
-    // ==================== YOUR PASSWORD ====================
-    const PASSWORD = "underground2026";   // ← CHANGE THIS IF YOU WANT
-    // ======================================================
-
-    // Check if password was already entered this browser session
-    if (!localStorage.getItem("botnet_access") || localStorage.getItem("botnet_access") !== PASSWORD) {
-      let pass = prompt("Enter dashboard password:");
-      if (pass !== PASSWORD) {
-        alert("Wrong password - access denied");
-        location.href = "https://github.com";
-        throw new Error("Access denied");
-      }
-      localStorage.setItem("botnet_access", PASSWORD);
+    // Password is in the URL: ?p=underground2026
+    const urlParams = new URLSearchParams(window.location.search);
+    const pass = urlParams.get('p');
+    
+    if (pass !== "underground2026") {
+      document.body.innerHTML = "<h1 style='color:red'>ACCESS DENIED</h1><p>Use the correct link with password parameter.</p>";
+      throw new Error("Access denied");
     }
 
     const firebaseConfig = {
